@@ -1,9 +1,10 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-import os #追加環境変数を取得するためのモジュール
+import os  # 環境変数を取得するためのモジュール
 
 app = Flask(__name__)
-CORS(app, resources={r"/api/*": {"origins": "https://tech0-gen-8-step3-testapp-node1-12.azurewebsites.net", "http://localhost:3000"}})  # CORS設定を更新
+# CORS設定（複数のオリジンをリスト形式で指定）
+CORS(app, resources={r"/api/*": {"origins": ["https://tech0-gen-8-step3-testapp-node1-12.azurewebsites.net", "http://localhost:3000"]}})
 
 @app.route('/', methods=['GET'])
 def hello():
@@ -16,8 +17,7 @@ def hello_world():
 @app.route('/api/multiply/<int:id>', methods=['GET'])
 def multiply(id):
     print("multiply")
-    # idの2倍の数を計算
-    doubled_value = id * 2
+    doubled_value = id * 2  # IDの2倍を計算
     return jsonify({"doubled_value": doubled_value})
 
 @app.route('/api/echo', methods=['POST'])
@@ -26,12 +26,11 @@ def echo():
     data = request.get_json()  # JSONデータを取得
     if data is None:
         return jsonify({"error": "Invalid JSON"}), 400
-    # 'message' プロパティが含まれていることを確認
     message = data.get('message', 'No message provided')
     return jsonify({"message": f"echo: {message}"})
 
 if __name__ == '__main__':
-    #環境変数PORTを取得（デフォルトは8000）
-    port = int(os.environ.get('port', 8000))
-    #デバックモードをローカル環境では有効に、本番では無効に
-    app.run(host='0.0.0.0',  port=port, debug=False)
+    # 環境変数PORTを取得（デフォルトは8000）
+    port = int(os.environ.get('PORT', 8000))
+    # ローカル環境ではデバッグを有効に、本番環境では無効に
+    app.run(host='0.0.0.0', port=port, debug=False)
